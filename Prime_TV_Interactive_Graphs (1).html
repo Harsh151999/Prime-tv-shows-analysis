@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime TV Shows — Interactive Graphs</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f5;padding:24px;color:#1a1a1a}
+h1{font-size:20px;font-weight:600;color:#1A3A5C;margin-bottom:4px}
+.subtitle{font-size:13px;color:#888;margin-bottom:20px}
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:7px 16px;border:1px solid #ccc;border-radius:20px;font-size:12px;cursor:pointer;color:#555;background:#fff;transition:all .15s}
+.tab:hover{border-color:#2E6DA4;color:#2E6DA4}
+.tab.active{background:#1A3A5C;color:#fff;border-color:#1A3A5C}
+.panel{display:none;background:#fff;border-radius:12px;padding:20px;border:1px solid #e0e0e0}
+.panel.active{display:block}
+.chart-wrap{position:relative;width:100%}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:12px;color:#555}
+.leg-dot{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle}
+h3{font-size:13px;font-weight:500;color:#555;margin-bottom:14px}
+</style>
+</head>
+<body>
+
+<h1>Prime Video TV Shows — Interactive Graphs</h1>
+<p class="subtitle">Dataset: 395 shows &nbsp;|&nbsp; Source: Prime_TV_Shows.xlsx</p>
+
+<div class="tabs">
+  <div class="tab active" onclick="show(0)">Language</div>
+  <div class="tab" onclick="show(1)">Genre</div>
+  <div class="tab" onclick="show(2)">Age Rating</div>
+  <div class="tab" onclick="show(3)">Year Trend</div>
+  <div class="tab" onclick="show(4)">IMDb Ratings</div>
+  <div class="tab" onclick="show(5)">Seasons</div>
+</div>
+
+<div class="panel active" id="p0"><h3>Shows by language</h3><div class="chart-wrap" style="height:260px"><canvas id="c0"></canvas></div></div>
+<div class="panel" id="p1"><h3>Top 10 genres</h3><div class="chart-wrap" style="height:320px"><canvas id="c1"></canvas></div></div>
+<div class="panel" id="p2"><h3>Age rating distribution</h3><div class="chart-wrap" style="height:280px"><canvas id="c2"></canvas></div><div class="legend" id="l2"></div></div>
+<div class="panel" id="p3"><h3>Content released by era</h3><div class="chart-wrap" style="height:260px"><canvas id="c3"></canvas></div></div>
+<div class="panel" id="p4"><h3>IMDb rating distribution (223 rated shows)</h3><div class="chart-wrap" style="height:260px"><canvas id="c4"></canvas></div></div>
+<div class="panel" id="p5"><h3>Number of seasons per show</h3><div class="chart-wrap" style="height:260px"><canvas id="c5"></canvas></div></div>
+
+<script>
+const charts = {};
+const gridColor = 'rgba(0,0,0,0.06)';
+const tickColor = '#666';
+
+const defaults = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{display:false}},
+  scales:{
+    x:{grid:{color:gridColor},ticks:{color:tickColor,font:{size:11,family:'Arial'}}},
+    y:{grid:{color:gridColor},ticks:{color:tickColor,font:{size:11,family:'Arial'}}}
+  }
+};
+
+function show(i) {
+  document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',i===j));
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  if(!charts[i]) initChart(i);
+}
+
+function initChart(i) {
+  const ctx = document.getElementById('c'+i).getContext('2d');
+  if(i===0){
+    charts[0]=new Chart(ctx,{type:'bar',data:{
+      labels:['English','Hindi','Japanese','Italiano','Spanish','Nederlands','Deutsch','French','Serbian','Marathi'],
+      datasets:[{data:[314,39,13,7,6,2,2,2,2,2],backgroundColor:'#2E6DA4',borderRadius:4}]
+    },options:{...defaults,indexAxis:'y'}});
+  }
+  if(i===1){
+    charts[1]=new Chart(ctx,{type:'bar',data:{
+      labels:['Drama','Comedy','Kids','Action','Drama, Comedy','Arts & Culture','Drama, Suspense','Drama, Action','Drama, Sci-fi','Sci-fi'],
+      datasets:[{data:[125,97,29,26,15,12,12,11,7,5],backgroundColor:'#1E8A6E',borderRadius:4}]
+    },options:{...defaults,indexAxis:'y'}});
+  }
+  if(i===2){
+    const labels=['16+','18+','13+','All ages','7+'];
+    const counts=[150,79,69,67,28];
+    const colors=['#2E6DA4','#C0522A','#8A4FC4','#1E8A6E','#B07D12'];
+    charts[2]=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data:counts,backgroundColor:colors,borderWidth:3,borderColor:'#fff',hoverOffset:8}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} shows (${Math.round(c.raw/393*100)}%)`}}}}});
+    const leg=document.getElementById('l2');
+    labels.forEach((l,j)=>{leg.innerHTML+=`<span><span class="leg-dot" style="background:${colors[j]}"></span>${l} — ${counts[j]} shows</span>`});
+  }
+  if(i===3){
+    charts[3]=new Chart(ctx,{type:'line',data:{
+      labels:['pre-2000','2000–04','2005–09','2010–14','2015–17','2018–20'],
+      datasets:[{data:[18,12,20,54,112,177],borderColor:'#C0522A',backgroundColor:'rgba(192,82,42,0.1)',fill:true,tension:0.35,borderWidth:2.5,pointBackgroundColor:'#C0522A',pointRadius:5,pointHoverRadius:7}]
+    },options:{...defaults}});
+  }
+  if(i===4){
+    const colors=['#D6E4F0','#B5C9E0','#8AADD0','#5E90BE','#3572A8','#1A5A90','#0D3F6E'];
+    charts[4]=new Chart(ctx,{type:'bar',data:{
+      labels:['3–4','4–5','5–6','6–7','7–8','8–9','9–10'],
+      datasets:[{data:[2,5,11,28,92,78,7],backgroundColor:colors,borderRadius:4}]
+    },options:{...defaults,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw} shows`}}}}});
+  }
+  if(i===5){
+    charts[5]=new Chart(ctx,{type:'bar',data:{
+      labels:['1','2','3','4','5','6','7','8','9+'],
+      datasets:[{data:[178,71,58,27,22,12,8,6,11],backgroundColor:'#B07D12',borderRadius:4}]
+    },options:{...defaults,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw} shows`}}}}});
+  }
+}
+
+initChart(0);
+</script>
+</body>
+</html>
