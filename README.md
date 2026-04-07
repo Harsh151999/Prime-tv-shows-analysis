@@ -66,3 +66,22 @@ The dataset includes:
 ---
 
 ## 📁 Project Structure
+
+rime-tv-shows-analysis/
+│
+├── Amazon_Prime_TV_Shows_Data.csv
+├── main.ipynb
+├── images/
+└── README.md
+
+
+---
+
+## ▶️ How to Run
+
+```bash
+git clone https://github.com/Harsh151999/Prime-tv-shows-analysis.git
+cd Prime-tv-shows-analysis
+
+pip install pandas numpy matplotlib seaborn
+jupyter notebook
