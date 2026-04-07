@@ -1,16 +1,16 @@
-# Prime Video TV Shows Analysis
+## Prime Video TV Shows Analysis
 
 This project explores and analyzes a dataset of Amazon Prime TV shows to uncover insights related to content distribution, genres, ratings, and release trends.
 
 ---
 
-# Overview
+##  Overview
 
 The objective of this project is to perform **exploratory data analysis (EDA)** on Prime Video TV shows and derive meaningful insights using Python and data visualization techniques.
 
 ---
 
-# Dataset
+## Dataset
 
 The dataset includes:
 - Title of TV shows
@@ -23,7 +23,7 @@ The dataset includes:
 
 ---
 
-# Workflow
+##  Workflow
 
 1. Data Cleaning
    - Handled missing IMDb values using median
@@ -44,7 +44,7 @@ The dataset includes:
 
 ---
 
-# Key Insights
+##  Key Insights
 
 - English dominates the content library, followed by Hindi  
 - Most popular genres: Drama, Comedy, Action  
@@ -54,7 +54,7 @@ The dataset includes:
 
 ---
 
-# Tech Stack
+##  Tech Stack
 
 - Python  
 - pandas  
@@ -65,9 +65,10 @@ The dataset includes:
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
-rime-tv-shows-analysis/
+
+Prime-tv-shows-analysis/
 │
 ├── Amazon_Prime_TV_Shows_Data.csv
 ├── main.ipynb
